@@ -15,17 +15,41 @@ Examples
 <script src="resources/javascript/moneyframe.bundle.js"></script>
 
 <script>
-  new MoneyFrame({ id: 'img_eatbch_ve', rate: 0.02, address: 'bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g' });
-  new MoneyFrame({ id: 'img_eatbch_ss', rate: 0.02, address: 'bitcoincash:qrsrvtc95gg8rrag7dge3jlnfs4j9pe0ugrmeml950' });
-  new MoneyFrame({ id: 'img_c4clothes', rate: 0.02, address: 'bitcoincash:qzx4tqcldmvs4up9mewkf3ru0z6vy9wm6qm782fwla' });
+  new MoneyFrame({ width: 160, height: 200,
+    id: 'img_eatbch_ve',
+    rate: 0.02,
+    address: 'bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g'
+  });
+  new MoneyFrame({ width: 160, height: 200,
+    id: 'img_eatbch_ss'
+    rate: 0.02,
+    address: 'bitcoincash:qrsrvtc95gg8rrag7dge3jlnfs4j9pe0ugrmeml950'
+  });
+  new MoneyFrame({ width: 160, height: 200,
+    id: 'img_c4clothes',
+    rate: 0.02,
+    address: 'bitcoincash:qzx4tqcldmvs4up9mewkf3ru0z6vy9wm6qm782fwla'
+  });
 </script>
 
 ``` html
 <script src="resources/javascript/moneyframe.bundle.js"></script>
 
 <script>
-  new MoneyFrame({ id: 'img_eatbch_ve', rate: 0.02, address: 'bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g' });
-  new MoneyFrame({ id: 'img_eatbch_ss', rate: 0.02, address: 'bitcoincash:qrsrvtc95gg8rrag7dge3jlnfs4j9pe0ugrmeml950' });
-  new MoneyFrame({ id: 'img_c4clothes', rate: 0.02, address: 'bitcoincash:qzx4tqcldmvs4up9mewkf3ru0z6vy9wm6qm782fwla' });
+  new MoneyFrame({ width: 160, height: 200,
+    id: 'img_eatbch_ve',
+    rate: 0.02,
+    address: 'bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g'
+  });
+  new MoneyFrame({ width: 160, height: 200,
+    id: 'img_eatbch_ss'
+    rate: 0.02,
+    address: 'bitcoincash:qrsrvtc95gg8rrag7dge3jlnfs4j9pe0ugrmeml950'
+  });
+  new MoneyFrame({ width: 160, height: 200,
+    id: 'img_c4clothes',
+    rate: 0.02,
+    address: 'bitcoincash:qzx4tqcldmvs4up9mewkf3ru0z6vy9wm6qm782fwla'
+  });
 </script>
 ```
