@@ -12,6 +12,8 @@ export interface MoneyFrameOptions {
   address: string;
   rate: number;
   currency?: string;
+  width?: number;
+  height?: number;
 }
 
 /**
@@ -27,6 +29,8 @@ export class MoneyFrame {
   address: string;
   rate: number;
   currency: string;
+  width: number;
+  height: number;
 
   private _target: HTMLElement;
   private _frame: HTMLElement;
@@ -39,6 +43,8 @@ export class MoneyFrame {
     this.address = args.address;
     this.rate = args.rate;
     this.currency = args.currency;
+    this.width = args.width;
+    this.height = args.height;
 
     this.initialize();
     this.verify();
@@ -94,17 +100,17 @@ export class MoneyFrame {
     this.cover();
 
     // set size explicitly to avoid disrupting layout and animations
-    this.initializeAfterSize(el, (el) => {
+    this.initializeAfterSize(el, (el, width, height) => {
       [frame, framePaid, frameUnpaid].forEach(div => {
-        div.style.width = `${el.width}px`;
-        div.style.height = `${el.height}px`;
+        div.style.width = `${width}px`;
+        div.style.height = `${height}px`;
       });
     });
 
     // place qrcode image after size is known
-    this.initializeAfterSize(el, (el) => {
+    this.initializeAfterSize(el, (el, width, height) => {
       let margin = 12;
-      let size = Math.min(el.width, el.height);
+      let size = Math.min(width, height);
       let cellSize = Math.floor(0.9 * (size - margin*2) / qr.getModuleCount());
 
       this._qrCodeImg = qr.createImgTag(cellSize, margin);
@@ -112,14 +118,21 @@ export class MoneyFrame {
     });
   }
 
-  private initializeAfterSize(el, initialization: (el) => any) {
-    if (el.width && el.height) {
+  private initializeAfterSize(el, initialization: (el, width: number, height: number) => any) {
+    const width = this.width || el.width;
+    const height = this.height || el.height;
+
+    if (width && height) {
       // set size immediately
-      initialization(el);
+      initialization(el, width, height);
     } else {
       // wait for element to load
       var emitter = el.tagName == "IMG" ? el : document;
-      emitter.addEventListener('load', () => initialization(el));
+      emitter.addEventListener('load', () => {
+        const width = this.width || el.width;
+        const height = this.height || el.height;
+        initialization(el, width, height)
+      });
     }
   }
 
