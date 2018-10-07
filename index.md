@@ -21,7 +21,7 @@ Examples
     address: 'bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g'
   });
   new MoneyFrame({ width: 160, height: 200,
-    id: 'img_eatbch_ss'
+    id: 'img_eatbch_ss',
     rate: 0.02,
     address: 'bitcoincash:qrsrvtc95gg8rrag7dge3jlnfs4j9pe0ugrmeml950'
   });
@@ -42,7 +42,7 @@ Examples
     address: 'bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g'
   });
   new MoneyFrame({ width: 160, height: 200,
-    id: 'img_eatbch_ss'
+    id: 'img_eatbch_ss',
     rate: 0.02,
     address: 'bitcoincash:qrsrvtc95gg8rrag7dge3jlnfs4j9pe0ugrmeml950'
   });
