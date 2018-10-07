@@ -4,16 +4,6 @@ layout: default
 
 A Bitcoin Cash powered, Money Button inspired, frame for images or videos. Each frame has an address and a hourly rate that is used to determine if the image or video should be available. The same address can be used for multiple frames or in multiple websites with different rates.
 
-Note that it's not intended to really protect the image or video but, instead, is intended to nudge people into keeping something readily available by contributing with a small amount.
-
-Possible use cases include:
-
-  * Monetizing digital assets in a blog,
-  * Sponsoring artists in art galleries,
-  * Subsidizing digital art collections with sponsors,
-  * Paying for public outdoor information services,
-  * etc.
-
 Examples
 --------
 
