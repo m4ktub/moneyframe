@@ -1,0 +1,33 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Single Image - Examples - Money Frame</title>
+  <script src="../dist/moneyframe.bundle.js"></script>
+</head>
+
+<body>
+  <section class="title">
+    <h1>Money Frame</h1>
+    <p>One image with a very high cost per day, for demostration purposes.</p>
+  </section>
+
+  <div>
+    <p>
+      The image bellow is a sample image that is made visible by contributing to <a href="https://twitter.com/eatBCH_SS">@eatBCH_SS</a>.
+    </p>
+    <img id="image"
+         src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/USAID-funded_Southern_Sudan_Interactive_Radio_Instruction_project.jpg/320px-USAID-funded_Southern_Sudan_Interactive_Radio_Instruction_project.jpg">
+    <p>
+      <strong>Credits:</strong><br>
+      Author: Karl Grobl/Education Development Center Inc.<br>
+      Source: <a href="https://en.wikipedia.org/wiki/South_Sudan#/media/File:USAID-funded_Southern_Sudan_Interactive_Radio_Instruction_project.jpg">https://en.wikipedia.org/wiki/South_Sudan#/media/File:USAID-funded_Southern_Sudan_Interactive_Radio_Instruction_project.jpg</a>
+    </p>
+  </div>
+
+  <script>
+    new MoneyFrame({ id: "image", rate: 0.01, address: "bitcoincash:qrsrvtc95gg8rrag7dge3jlnfs4j9pe0ugrmeml950" });
+  </script>
+</body>
+</html>

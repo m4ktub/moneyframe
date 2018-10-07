@@ -1,0 +1,48 @@
+/**
+ * Basic MoneyFrame style.
+ * Based on https://davidwalsh.name/css-flip
+ */
+
+ /* entire container, keeps perspective */
+.moneyframe {
+  perspective: 1000px;
+}
+
+  /* flip the pane when marked unpaid */
+  .moneyframe.unpaid .moneyframe-body {
+    transform: rotateY(180deg);
+  }
+
+/* flip speed goes here */
+.moneyframe-body {
+  transition: 0.6s;
+  transform-style: preserve-3d;
+
+  position: relative;
+}
+
+/* hide back of pane during swap */
+.moneyframe-paid, .moneyframe-unpaid {
+  backface-visibility: hidden;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* front pane, placed above back */
+.moneyframe-paid {
+  z-index: 2;
+  /* for firefox 31 */
+  transform: rotateY(0deg);
+}
+
+/* back, initially hidden pane */
+.moneyframe-unpaid {
+  transform: rotateY(180deg);
+}
+
+/* center contents by default */
+.moneyframe-unpaid {
+  text-align: center;
+}
