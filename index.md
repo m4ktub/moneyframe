@@ -17,7 +17,14 @@ Possible use cases include:
 Examples
 --------
 
-<img id="img_eatbch_ve" src="https://pbs.twimg.com/profile_images/1002336267411939328/SxeSLZvZ_400x400.jpg" width="200"> <img id="img_eatbch_ss" src="https://pbs.twimg.com/profile_images/1002291143617396736/FOnwtK_O_400x400.jpg" width="200"> <img id="img_c4clothes" src="https://pbs.twimg.com/profile_images/1021886596939833344/4qU5gwTy_400x400.jpg" width="200">
+eatBCH_VE <br>
+<img id="img_eatbch_ve" src="https://pbs.twimg.com/profile_images/1002336267411939328/SxeSLZvZ_400x400.jpg" width="200">
+
+eatBCH_SS <br>
+<img id="img_eatbch_ss" src="https://pbs.twimg.com/profile_images/1002291143617396736/FOnwtK_O_400x400.jpg" width="200">
+
+Coins 4 Cothes <br>
+<img id="img_c4clothes" src="https://pbs.twimg.com/profile_images/1021886596939833344/4qU5gwTy_400x400.jpg" width="200">
 
 <script src="resources/javascript/moneyframe.bundle.js"></script>
 
@@ -27,7 +34,7 @@ Examples
   new MoneyFrame({ id: 'img_c4clothes', rate: 0.02, address: 'bitcoincash:qzx4tqcldmvs4up9mewkf3ru0z6vy9wm6qm782fwla' });
 </script>
 
-``` javascript
+``` html
 <script src="resources/javascript/moneyframe.bundle.js"></script>
 
 <script>
