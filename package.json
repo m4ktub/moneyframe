@@ -1,5 +1,5 @@
 {
-  "version": "0.1.1",
+  "version": "0.2.0",
   "name": "moneyframe",
   "description": "A Bitcoin Cash metered frame.",
   "keywords": [
@@ -24,11 +24,15 @@
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/qrcode-generator": "^1.0.6",
+    "@types/socket.io-client": "^1.4.32",
     "axios": "^0.18.0",
+    "bchaddrjs": "^0.2.2",
     "css-loader": "^1.0.0",
     "qrcode-generator": "^1.4.1",
+    "socket.io-client": "^2.1.1",
     "style-loader": "^0.23.0",
     "ts-loader": "^5.2.1",
+    "typed-event": "^0.1.0",
     "typedoc": "^0.12.0",
     "typescript": "^3.1.1",
     "webpack": "^4.20.2",
@@ -38,7 +42,7 @@
   "scripts": {
     "build": "npm run docs && npm run pack",
     "docs": "typedoc --name \"Money Frame\" --target ES5 --module amd --out ./dist/docs ./src",
-    "pack": "webpack --mode production",
+    "webpack": "webpack --mode production",
     "watch": "webpack --watch --mode development"
   }
 }

@@ -1,3 +1,4 @@
-import * as m from "./MoneyFrame";
+import MoneyFrame from "./MoneyFrame";
 
-window['MoneyFrame'] = m.MoneyFrame;
+// expose MoneyFrame in the page
+window['MoneyFrame'] = MoneyFrame;

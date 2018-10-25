@@ -1,8 +1,13 @@
-import axios, { AxiosResponse, AxiosError, AxiosInstance } from 'axios';
-import { PaymentStatus } from "./PaymentStatus";
 import * as qrcode from "qrcode-generator";
+import Logger from "./Logger";
+import { PaymentProcessor } from "./Payments";
 
 import "./styles/frame.css";
+
+namespace Configuration {
+  export const className = "moneyframe";
+  export const interval = 1000;
+}
 
 /**
  * The structure of the object that can be passed as options for the MoneyFrame.
@@ -23,7 +28,7 @@ export interface MoneyFrameOptions {
  * The MIT License (MIT) <br/>
  * Copyright (c) 2018 Cláudio Gil
  */
-export class MoneyFrame {
+export default class MoneyFrame {
 
   readonly id: string;
   address: string;
@@ -34,9 +39,9 @@ export class MoneyFrame {
 
   private _target: HTMLElement;
   private _frame: HTMLElement;
-  private _axios: AxiosInstance;
-  private _timeout: number;
-  private _qrCodeImg: string;
+
+  private _processor: PaymentProcessor;
+  private _interval: number;
 
   constructor(args: MoneyFrameOptions) {
     this.id = args.id;
@@ -46,21 +51,19 @@ export class MoneyFrame {
     this.width = args.width;
     this.height = args.height;
 
-    this.initialize();
-    this.verify();
+    // initialization
+    this.initializeUi();
+    this.initializeProcessor();
+
+    // start covered by default
+    this.cover();
   }
 
-  private log(...message) {
-    console
-    && console.log
-    && console.debug.apply(null, [`[MoneyFrame#${this.id}]`].concat(message));
+  public toString(): string {
+    return `[MoneyFrame#${this.id}]`;
   }
 
-  private initialize() {
-    this._axios = axios.create({
-      baseURL: 'https://rest.bitcoin.com/v1'
-    });
-
+  private initializeUi() {
     var el = document.getElementById(this.id);
 
     let frame = document.createElement("div");
@@ -70,12 +73,12 @@ export class MoneyFrame {
     let frameUnpaidQr = document.createElement("div");
     let frameUnpaidMsg = document.createElement("div");
 
-    frame.className = "moneyframe";
-    frameBody.className = "moneyframe-body";
-    framePaid.className = "moneyframe-paid";
-    frameUnpaid.className = "moneyframe-unpaid";
-    frameUnpaidQr.className = "qrcode";
-    frameUnpaidMsg.className = "qrcode-message";
+    frame.className = `${Configuration.className}`;
+    frameBody.className = `${Configuration.className}-body`;
+    framePaid.className = `${Configuration.className}-paid`;
+    frameUnpaid.className = `${Configuration.className}-unpaid`;
+    frameUnpaidQr.className = 'qrcode';
+    frameUnpaidMsg.className = 'qrcode-message';
 
     frame.appendChild(frameBody);
     frameBody.appendChild(framePaid);
@@ -96,11 +99,8 @@ export class MoneyFrame {
     qr.addData(this.address.toUpperCase(), "Alphanumeric");
     qr.make();
 
-    // start covered by default
-    this.cover();
-
     // set size explicitly to avoid disrupting layout and animations
-    this.initializeAfterSize(el, (el, width, height) => {
+    this.initializeUiAfterSize(el, (el, width, height) => {
       [frame, framePaid, frameUnpaid].forEach(div => {
         div.style.width = `${width}px`;
         div.style.height = `${height}px`;
@@ -108,17 +108,17 @@ export class MoneyFrame {
     });
 
     // place qrcode image after size is known
-    this.initializeAfterSize(el, (el, width, height) => {
+    this.initializeUiAfterSize(el, (el, width, height) => {
       let margin = 12;
       let size = Math.min(width, height);
       let cellSize = Math.floor(0.9 * (size - margin*2) / qr.getModuleCount());
 
-      this._qrCodeImg = qr.createImgTag(cellSize, margin);
-      frameUnpaidQr.innerHTML = this._qrCodeImg;
+      let img = qr.createImgTag(cellSize, margin);
+      frameUnpaidQr.innerHTML = img;
     });
   }
 
-  private initializeAfterSize(el, initialization: (el, width: number, height: number) => any) {
+  private initializeUiAfterSize(el, initialization: (el, width: number, height: number) => any) {
     const width = this.width || el.width;
     const height = this.height || el.height;
 
@@ -136,88 +136,38 @@ export class MoneyFrame {
     }
   }
 
+  private initializeProcessor() {
+    this._processor = new PaymentProcessor(this.address, this.rate);
+
+    // register payment events
+    this._processor.paidEvent.register(() => this.uncover());
+    this._processor.unpaidEvent.register(() => this.cover());
+
+    // register regular payment counter
+    this._processor.paidEvent.register(() => {
+      this._interval = window.setInterval(() => {
+        this._processor.paymentEvent.emit(this._processor.status);
+      }, Configuration.interval);
+    });
+    this._processor.unpaidEvent.register(() => {
+      window.clearInterval(this._interval);
+      this._interval = 0;
+    });
+
+    this._processor.paymentEvent.register(status => {
+      let remaining = Math.floor((status.paidUntil - Date.now()) / 1000);
+      Logger.log(this.toString(), `frame has ${remaining} seconds left`);
+    });
+  }
+
   cover() {
     this._frame.classList.add("unpaid");
-    this.log("element marked as unpaid");
+    Logger.log(this.toString(), "element marked as unpaid");
   }
 
   uncover() {
     this._frame.classList.remove("unpaid");
-    this.log("element marked as paid");
-  }
-
-  private process(status: PaymentStatus) {
-    this.log("checking payment status...", status);
-
-    if (status.paid) {
-      this.uncover();
-    } else {
-      this.cover();
-    }
-
-    let paidUnconfirmed = status.paid && status.confirmations == 0;
-    let timeToNextVerify = Math.max(paidUnconfirmed ? 60000 : 5000, status.endTime - Date.now());
-
-    this._timeout = window.setTimeout(() => this.verify(), Math.min(timeToNextVerify, 24*3600*1000));
-    this.log(`next verification will occur ${Math.floor(timeToNextVerify/1000)} sec`
-      + ` from now on ${new Date(Date.now() + timeToNextVerify)}`);
-  }
-
-  verify() {
-    this.log(`verifying payments in ${this.address}...`);
-
-    // clear any timeout, if set
-    clearTimeout(this._timeout);
-
-    // does request and process
-    this._axios.get(`/address/utxo/${this.address}`)
-    .then(response => this.calculate(response.data))
-    .then(result => this.process(result))
-    .catch(error => {
-      this.log("failed to get payments", error);
-      this.process(PaymentStatus.unpaid());
-    });
-  }
-
-  private calculate(data: Array<any>): PaymentStatus {
-    const now = Date.now();
-    const satRateSec = this.rate / 3600*100000000;
-
-    function reducer(acc, utxo) {
-      let last = acc[0];
-
-      let isNewHeight = !last || last.confirmations != utxo.confirmations;
-      if (isNewHeight) {
-        let newStartTime = now - utxo.confirmations * 600000;
-        let lastEndTime = Math.max(newStartTime, last ? last.endTime : 0);
-
-        acc.unshift({
-          confirmations: utxo.confirmations,
-          satoshis: utxo.satoshis,
-          startTime: newStartTime,
-          endTime: lastEndTime + Math.floor(1000 * utxo.satoshis / satRateSec)
-        });
-      } else {
-        last.satoshis += utxo.satoshis;
-        last.endTime += Math.floor(1000 * utxo.satoshis / satRateSec);
-      }
-
-      return acc;
-    };
-
-    var result = data.reduceRight(reducer, []);
-    if (!result.length) {
-      this.log("no payments found");
-      return PaymentStatus.unpaid();
-    } else {
-      let top = result[0];
-
-      this.log(`calculating with a rate of ${satRateSec.toFixed(0)} sat/sec...`);
-      this.log(`last payment was ${top.confirmations} blocks ago, paid until ${new Date(top.endTime)}`);
-
-      let paid = top.endTime > now;
-      return new PaymentStatus(paid, top.endTime, top.confirmations);
-    }
+    Logger.log(this.toString(), "element marked as paid");
   }
 
 }
