@@ -40,7 +40,7 @@
   },
   "dependencies": {},
   "scripts": {
-    "build": "npm run docs && npm run pack",
+    "build": "npm run docs && npm run webpack",
     "docs": "typedoc --name \"Money Frame\" --target ES5 --module amd --out ./dist/docs ./src",
     "webpack": "webpack --mode production",
     "watch": "webpack --watch --mode development"
