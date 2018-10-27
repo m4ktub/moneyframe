@@ -19,7 +19,7 @@ Choose an address, the viewing rate, and click "Go". You can use one of your own
   <div>
     <label style="display: inline-block; width: 60px;" for="rate">Rate</label>
     <input id="rate" type="range" style="width: 270px;"
-           max="1.00000000" min="0.00000001" step="0.10000000" value="0.01000000"
+           max="0.10000000" min="0.00000001" step="0.00000001" value="0.01000000"
            oninput="document.getElementById('lrate').innerHTML = parseFloat(this.value).toFixed(8);">
     <span id="lrate">0.01000000</span> BCH/hour
   </div>
