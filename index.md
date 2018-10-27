@@ -7,7 +7,7 @@ A Bitcoin Cash powered, Money Button inspired, frame for images or videos. Each 
 Video
 -----
 
-Choose an address, the viewing rate, and click "Go". You can use one of your own addresses to try it out.
+Choose an address, the viewing rate, and click "Go". You can use one of your own addresses.
 
 <div id="fields">
   <div>
@@ -29,6 +29,7 @@ Choose an address, the viewing rate, and click "Go". You can use one of your own
 </div>
 <div style="width: 640px; height: 360px; position: relative;">
   <video id="htmlvideo"
+         controls
          src="https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v"
          width="640"
          height="360">
@@ -70,43 +71,6 @@ Choose an address, the viewing rate, and click "Go". You can use one of your own
   }
 </script>
 
-<br>
-
-``` html
-<script src="resources/javascript/moneyframe.bundle.js"></script>
-
-<script>
-  let video = document.getElementById('video');
-  let countdown = document.getElementById('countdown');
-
-  let address = addressEl.value;
-  let rate = parseFloat(rateEl.value);
-
-  let frame = new MoneyFrame({
-    id: 'htmlvideo',
-    rate: rate,
-    address: address
-  });
-
-  frame.paidEvent.register(function() {
-    video.play();
-  });
-
-  frame.unpaidEvent.register(function() {
-    video.pause();
-    countdown.style.display = 'none';
-  });
-
-  frame.countdownEvent.register(function(status) {
-    let timeMs = status.paidUntil - Date.now();
-    let seconds = Math.floor(timeMs / 1000);
-
-    countdown.style.display = 'block';
-    countdown.innerHTML = seconds + " seconds remaining";
-  });
-</script>
-```
-
 Images
 ------
 
@@ -136,25 +100,3 @@ Try donating 20 cents to any of the addresses. If Bitcoin Cash is worth $500 the
     address: 'bitcoincash:qzx4tqcldmvs4up9mewkf3ru0z6vy9wm6qm782fwla'
   });
 </script>
-
-``` html
-<script src="resources/javascript/moneyframe.bundle.js"></script>
-
-<script>
-  new MoneyFrame({ width: 160, height: 230,
-    id: 'img_eatbch_ve',
-    rate: 0.02,
-    address: 'bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g'
-  });
-  new MoneyFrame({ width: 160, height: 230,
-    id: 'img_eatbch_ss',
-    rate: 0.02,
-    address: 'bitcoincash:qrsrvtc95gg8rrag7dge3jlnfs4j9pe0ugrmeml950'
-  });
-  new MoneyFrame({ width: 160, height: 230,
-    id: 'img_c4clothes',
-    rate: 0.02,
-    address: 'bitcoincash:qzx4tqcldmvs4up9mewkf3ru0z6vy9wm6qm782fwla'
-  });
-</script>
-```
