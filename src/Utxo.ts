@@ -1,6 +1,5 @@
 import axios, { AxiosResponse, AxiosError, AxiosInstance } from "axios";
 import * as bchaddr from "bchaddrjs";
-import Logger from "./Logger";
 import Socket from "./Socket"
 
 /**
@@ -21,9 +20,14 @@ export interface Utxo {
 }
 
 /**
- * An UTXO processor is a function that accepts one utxo. No result is needed.
+ * An UTXO processor is a group of function to handle the loading and processing
+ * of UTXOs from an address.
  */
-type UtxoProcessor = (utxo: Utxo) => void;
+interface UtxoProcessor {
+  process: (utxo: Utxo) => void;
+  onLoad?: () => void;
+  onError?: (error: Error) => void;
+}
 
 /**
  * The UTXO reader is responsible for obtaining the UTXO set for an address
@@ -79,13 +83,23 @@ export class UtxoReader {
       .then(utxos => this.emit(utxos, this._loading))
       .then(() => this.completeLoad())
       .catch(error => {
-        Logger.log(this.toString(), "failed to read utxos", error);
+        console.error(this.toString(), "failed to read utxos", error);
+        this.emitError(error, this._loading);
       });
   }
 
   private completeLoad() {
-    let processors = Array.from(this._loading);
-    processors.forEach(processor => this._receiving.add(processor));
+    // add all loading to receiving
+    Array.from(this._loading).forEach(processor => {
+      this._receiving.add(processor);
+
+      // fire onload if available
+      if (processor.onLoad) {
+        processor.onLoad();
+      }
+    });
+
+    // clear loading set
     this._loading = new Set();
   }
 
@@ -118,7 +132,15 @@ export class UtxoReader {
 
   private emit(utxos: Utxo[], processors: Set<UtxoProcessor>) {
     utxos.reverse().forEach(utxo => {
-      Array.from(processors).forEach(processor => processor(utxo))
+      Array.from(processors).forEach(processor => processor.process(utxo))
+    });
+  }
+
+  private emitError(error: Error, processors: Set<UtxoProcessor>) {
+    Array.from(processors).forEach(processor => {
+      if (processor.onError) {
+        processor.onError(error);
+      }
     });
   }
 

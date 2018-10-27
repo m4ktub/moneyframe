@@ -1,12 +1,16 @@
 import * as qrcode from "qrcode-generator";
-import Logger from "./Logger";
-import { PaymentProcessor } from "./Payments";
+import { PaymentProcessor, PaymentStatus, Event } from "./Payments";
 
 import "./styles/frame.css";
 
 namespace Configuration {
   export const className = "moneyframe";
   export const interval = 1000;
+}
+
+namespace Messages {
+  export const loading = "Checking address...";
+  export const waitingPayment = "Waiting for payment...";
 }
 
 /**
@@ -23,25 +27,28 @@ export interface MoneyFrameOptions {
 
 /**
  * A Bitcoin Cash powered frame for images or videos.
- *
- * @license
- * The MIT License (MIT) <br/>
- * Copyright (c) 2018 Cláudio Gil
  */
 export default class MoneyFrame {
 
+  /**
+   * The id of the covered HTML element.
+   */
   readonly id: string;
-  address: string;
-  rate: number;
-  currency: string;
-  width: number;
-  height: number;
+  readonly address: string;
+  readonly rate: number;
+  readonly currency: string;
+  readonly width: number;
+  readonly height: number;
 
+  // elements
   private _target: HTMLElement;
   private _frame: HTMLElement;
+  private _message: HTMLElement;
 
+  // payments
   private _processor: PaymentProcessor;
-  private _interval: number;
+  private _countdownEvent: Event<PaymentStatus> = new Event();
+  private _countdownInterval: number;
 
   constructor(args: MoneyFrameOptions) {
     this.id = args.id;
@@ -59,7 +66,36 @@ export default class MoneyFrame {
     this.cover();
   }
 
-  public toString(): string {
+  /**
+   * Event fired when a frame is paid and payment expires.
+   */
+  get unpaidEvent(): Event<PaymentStatus> {
+    return this._processor.unpaidEvent;
+  }
+
+  /**
+   * Event fired when a frame is unpaid and new payment is done.
+   */
+  get paidEvent(): Event<PaymentStatus> {
+    return this._processor.paidEvent;
+  }
+
+  /**
+   * Event fired when a new payment is done. This event is also fired after
+   * `paidEvent`, that is, for the same payment that uncovers the frame.
+   */
+  get paymentEvent(): Event<PaymentStatus> {
+    return this._processor.paymentEvent;
+  }
+
+  /**
+   * Event fired once per second while the frame is paid.
+   */
+  get countdownEvent(): Event<PaymentStatus> {
+    return this._countdownEvent;
+  }
+
+  toString(): string {
     return `[MoneyFrame#${this.id}]`;
   }
 
@@ -89,10 +125,11 @@ export default class MoneyFrame {
     frameUnpaid.appendChild(frameUnpaidQr);
     frameUnpaid.appendChild(frameUnpaidMsg);
 
-    frameUnpaidMsg.innerHTML = "Waiting for Bitcoin Cash payment...";
+    frameUnpaidMsg.innerHTML = Messages.loading;
 
     this._target = el;
     this._frame = frame;
+    this._message = frameUnpaidMsg;
 
     // generate qrcode
     let qr = qrcode(0, 'L');
@@ -137,37 +174,49 @@ export default class MoneyFrame {
   }
 
   private initializeProcessor() {
-    this._processor = new PaymentProcessor(this.address, this.rate);
+    let processor = this._processor = new PaymentProcessor(this.address, this.rate);
+
+    // register load event
+    processor.loadEvent.register(() => this.loadedAddress());
 
     // register payment events
-    this._processor.paidEvent.register(() => this.uncover());
-    this._processor.unpaidEvent.register(() => this.cover());
+    processor.paidEvent.register(() => this.uncover());
+    processor.unpaidEvent.register(() => this.cover());
 
-    // register regular payment counter
-    this._processor.paidEvent.register(() => {
-      this._interval = window.setInterval(() => {
-        this._processor.paymentEvent.emit(this._processor.status);
+    // register regular countdown event
+    processor.paidEvent.register(() => {
+      this._countdownInterval = window.setInterval(() => {
+        this._countdownEvent.emit(this._processor.status);
       }, Configuration.interval);
     });
-    this._processor.unpaidEvent.register(() => {
-      window.clearInterval(this._interval);
-      this._interval = 0;
-    });
-
-    this._processor.paymentEvent.register(status => {
-      let remaining = Math.floor((status.paidUntil - Date.now()) / 1000);
-      Logger.log(this.toString(), `frame has ${remaining} seconds left`);
+    processor.unpaidEvent.register(() => {
+      window.clearInterval(this._countdownInterval);
+      this._countdownInterval = 0;
     });
   }
 
+  private loadedAddress() {
+    this._message.innerHTML = Messages.waitingPayment;
+  }
+
+  /**
+   * Covers the content. The covering effect is run.
+   *
+   * This is called automatically when the frame loads and when uncovered and
+   * the payment runs out. It can also be called on demand.
+   */
   cover() {
     this._frame.classList.add("unpaid");
-    Logger.log(this.toString(), "element marked as unpaid");
   }
 
+  /**
+   * Uncovers the content. The uncovering effect is run.
+   *
+   * This is called automatically if there's enough payment in the address or
+   * if a new payment is made. It can also be called on demand.
+   */
   uncover() {
     this._frame.classList.remove("unpaid");
-    Logger.log(this.toString(), "element marked as paid");
   }
 
 }

@@ -1,6 +1,7 @@
 import { EventWithArg } from 'typed-event';
-import Logger from "./Logger";
 import { UtxoService, Utxo } from "./Utxo"
+
+export { EventWithArg as Event };
 
 /**
  * Representation of the payment status for an item.
@@ -39,10 +40,11 @@ export class PaymentProcessor {
   readonly bchRateHour: number;
   readonly satRateSec: number;
 
-  private _status: PaymentStatus;
+  private _status: PaymentStatus = PaymentStatus.unpaid();
   private _paidTimeout: number;
   private _unpaidTimeout: number;
 
+  readonly loadEvent: EventWithArg<PaymentStatus> = new EventWithArg();
   readonly unpaidEvent: EventWithArg<PaymentStatus> = new EventWithArg();
   readonly paidEvent: EventWithArg<PaymentStatus> = new EventWithArg();
   readonly paymentEvent: EventWithArg<PaymentStatus> = new EventWithArg();
@@ -51,9 +53,11 @@ export class PaymentProcessor {
     this.address = address;
     this.bchRateHour = bchRateHour;
     this.satRateSec = Math.max(1, Math.floor((100000000 * bchRateHour) / 3600));
-    this._status = PaymentStatus.unpaid();
 
-    UtxoService.monitor(address, (utxo: Utxo) => this.process(utxo));
+    UtxoService.monitor(address, {
+      process: (utxo: Utxo) => this.process(utxo),
+      onLoad: () => this.loadEvent.emit(this._status)
+    });
   }
 
   get status(): PaymentStatus {
@@ -93,11 +97,11 @@ export class PaymentProcessor {
     this._paidTimeout = 0;
     this.paymentEvent.emit(this._status);
 
+    // clear current unpaid timeout
+    window.clearTimeout(this._unpaidTimeout);
+
     // arm new unpaid event
     let unpaidWhen = this._status.paidUntil - Date.now();
-    Logger.log(this.toString(), `setting unpaid timeout for ${Math.floor(unpaidWhen/1000)} sec from now`);
-
-    window.clearTimeout(this._unpaidTimeout);
     this._unpaidTimeout = window.setTimeout(() => this.emitUnpaid(), unpaidWhen);
   }
 
