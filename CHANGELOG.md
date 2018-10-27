@@ -1,6 +1,13 @@
 Money Frame
 ===========
 
+Version 0.3.0
+-------------
+
+  * Exposed events in frame to allow page actions on paid/unpaid.
+  * Added youtube example.
+  * Added HTML5 video example.
+
 Version 0.2.0
 -------------
 
