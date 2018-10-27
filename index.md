@@ -7,73 +7,101 @@ A Bitcoin Cash powered, Money Button inspired, frame for images or videos. Each 
 Video
 -----
 
-<form id="form">
-    <fieldset>
-      <legend>Choose address and rate for video</legend>
-
-      <div>
-        <label for="address">Address</label>
-        <input id="address" type="text" size="50"
-               placeholder="bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g"
-               value="bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g">
-      </div>
-
-      <div>
-        <label for="rate">Rate</label>
-        <input id="rate" type="range"
-               max="1.0" min="0.00000001" step="0.00000001" value="0.00000001"
-               oninput="document.getElementById('lrate').innerHTML = parseFloat(this.value).toFixed(8);">
-        <span id="lrate">0.00000001</span> BCH/hour
-      </div>
-
-      <button id="button" type="button"
-              onclick="setup();">Go</button>
-    </fieldset>
-  </form>
-
-  <div style="width: 640px; height: 360px; position: relative;">
-    <video id="video"
-           src="https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v"
-           width="640"
-           height="360">
-
-        Sorry, your browser doesn't support embedded videos.
-    </video>
-    <div id="countdown"
-         style="position: absolute; display: none; bottom: 40px; right: 10px; padding: 4px; background-color: white;"></div>
+<div id="fields">
+  <div>
+    <label style="display: inline-block; width: 60px;" for="address">Address</label>
+    <input id="address" type="text" size="50"
+           placeholder="bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g"
+           value="bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g">
+    <button id="button" type="button"
+            onclick="setupVideo();">Go</button>
   </div>
+  <div>
+    <label style="display: inline-block; width: 60px;" for="rate">Rate</label>
+    <input id="rate" type="range" style="width: 270px;"
+           max="1.0" min="0.00000001" step="0.00000001" value="0.00000001"
+           oninput="document.getElementById('lrate').innerHTML = parseFloat(this.value).toFixed(8);">
+    <span id="lrate">0.00000001</span> BCH/hour
+  </div>
+  <br/>
+</div>
+<div style="width: 640px; height: 360px; position: relative;">
+  <video id="htmlvideo"
+         src="https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v"
+         width="640"
+         height="360">
 
-  <script>
-    function setup() {
-      let formEl = document.getElementById('form');
-      let addressEl = document.getElementById('address');
-      let rateEl = document.getElementById('rate');
+      Sorry, your browser doesn't support embedded videos.
+  </video>
+  <div id="countdown"
+       style="position: absolute; display: none; bottom: 40px; right: 10px; padding: 4px; background-color: white;"></div>
+</div>
 
-      formEl.style.display = "none";
+<script>
+  function setupVideo() {
+    let fieldsEl = document.getElementById('fields');
+    let addressEl = document.getElementById('address');
+    let rateEl = document.getElementById('rate');
 
-      let address = addressEl.value;
-      let rate = parseFloat(rateEl.value);
+    let video = document.getElementById('video');
+    let countdown = document.getElementById('countdown');
 
-      window.mf1 = new MoneyFrame({ id: 'video', rate: rate, address: address });
-      window.mf1.paidEvent.register(function() {
-        let video = document.getElementById('video')
-        video.play();
-      });
-      window.mf1.unpaidEvent.register(function() {
-        let video = document.getElementById('video')
-        video.pause();
-        let countdown = document.getElementById('countdown');
-        countdown.style.display = 'none';
-      });
-      window.mf1.countdownEvent.register(function(status) {
-        let seconds = Math.floor((status.paidUntil - Date.now()) / 1000);
+    fieldsEl.style.display = "none";
 
-        let countdown = document.getElementById('countdown');
-        countdown.style.display = 'block';
-        countdown.innerHTML = seconds + " seconds remaining";
-      });
-    }
-  </script>
+    let address = addressEl.value;
+    let rate = parseFloat(rateEl.value);
+
+    let frame = new MoneyFrame({ id: 'htmlvideo', rate: rate, address: address });
+    frame.paidEvent.register(function() {
+      video.play();
+    });
+    frame.unpaidEvent.register(function() {
+      video.pause();
+      countdown.style.display = 'none';
+    });
+    frame.countdownEvent.register(function(status) {
+      let seconds = Math.floor((status.paidUntil - Date.now()) / 1000);
+
+      countdown.style.display = 'block';
+      countdown.innerHTML = seconds + " seconds remaining";
+    });
+  }
+</script>
+
+``` html
+<script src="resources/javascript/moneyframe.bundle.js"></script>
+
+<script>
+  let video = document.getElementById('video');
+  let countdown = document.getElementById('countdown');
+
+  let address = addressEl.value;
+  let rate = parseFloat(rateEl.value);
+
+  let frame = new MoneyFrame({
+    id: 'htmlvideo',
+    rate: rate,
+    address: address
+  });
+
+  frame.paidEvent.register(function() {
+    video.play();
+  });
+
+  frame.unpaidEvent.register(function() {
+    video.pause();
+    countdown.style.display = 'none';
+  });
+  
+  frame.countdownEvent.register(function(status) {
+    let timeMs = status.paidUntil - Date.now();
+    let seconds = Math.floor(timeMs / 1000);
+
+    countdown.style.display = 'block';
+    countdown.innerHTML = seconds + " seconds remaining";
+  });
+</script>
+```
 
 Images
 ------
