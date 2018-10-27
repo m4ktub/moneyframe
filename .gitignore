@@ -11,4 +11,7 @@ Desktop.ini
 # Node JS
 node_modules/
 
+# artifacts from master
+dist/
+examples/
 
