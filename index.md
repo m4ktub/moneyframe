@@ -2,8 +2,6 @@
 layout: default
 ---
 
-A Bitcoin Cash powered, Money Button inspired, frame for images or videos. Each frame has an address and a hourly rate that is used to determine if the image or video should be available. The same address can be used for multiple frames or in multiple websites with different rates.
-
 Video
 -----
 
@@ -21,9 +19,9 @@ Choose an address, the viewing rate, and click "Go". You can use one of your own
   <div>
     <label style="display: inline-block; width: 60px;" for="rate">Rate</label>
     <input id="rate" type="range" style="width: 270px;"
-           max="1.0" min="0.00000001" step="0.00000001" value="0.01"
+           max="1.00000000" min="0.00000001" step="0.10000000" value="0.01000000"
            oninput="document.getElementById('lrate').innerHTML = parseFloat(this.value).toFixed(8);">
-    <span id="lrate">0.00000001</span> BCH/hour
+    <span id="lrate">0.01000000</span> BCH/hour
   </div>
   <br/>
 </div>
