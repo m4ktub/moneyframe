@@ -43,7 +43,7 @@ Video
     let addressEl = document.getElementById('address');
     let rateEl = document.getElementById('rate');
 
-    let video = document.getElementById('video');
+    let video = document.getElementById('htmlvideo');
     let countdown = document.getElementById('countdown');
 
     fieldsEl.style.display = "none";
@@ -92,7 +92,7 @@ Video
     video.pause();
     countdown.style.display = 'none';
   });
-  
+
   frame.countdownEvent.register(function(status) {
     let timeMs = status.paidUntil - Date.now();
     let seconds = Math.floor(timeMs / 1000);
