@@ -7,6 +7,8 @@ A Bitcoin Cash powered, Money Button inspired, frame for images or videos. Each 
 Video
 -----
 
+Choose an address, the viewing rate, and click "Go". You can use one of your own addresses to try it out.
+
 <div id="fields">
   <div>
     <label style="display: inline-block; width: 60px;" for="address">Address</label>
@@ -19,7 +21,7 @@ Video
   <div>
     <label style="display: inline-block; width: 60px;" for="rate">Rate</label>
     <input id="rate" type="range" style="width: 270px;"
-           max="1.0" min="0.00000001" step="0.00000001" value="0.00000001"
+           max="1.0" min="0.00000001" step="0.00000001" value="0.01"
            oninput="document.getElementById('lrate').innerHTML = parseFloat(this.value).toFixed(8);">
     <span id="lrate">0.00000001</span> BCH/hour
   </div>
@@ -67,6 +69,8 @@ Video
     });
   }
 </script>
+
+<br>
 
 ``` html
 <script src="resources/javascript/moneyframe.bundle.js"></script>
