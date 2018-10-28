@@ -1,0 +1,73 @@
+<style type="text/css">
+#{{ include.id }} {
+  margin-bottom: 1em;
+  padding: 8px;
+  background-color: lightgray;
+}
+
+#{{ include.id }} label {
+  display: inline-block;
+  width: 60px;
+  font-weight: bold;
+  text-align: right;
+  padding-right: 4px;
+}
+
+#{{ include.id }} input[type="text"] {
+  border: none;
+  padding: 10px 10px;
+  font-family: monospace;
+}
+
+#{{ include.id }} input[type="range"] {
+  border: none;
+  padding: 10px 0px;
+  font-family: monospace;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+#{{ include.id }} button {
+  padding: 10px;
+  float: right;
+}
+</style>
+
+<div id="{{ include.id }}">
+  <div>
+    <label for="{{ include.id }}address">Address</label>
+    <input id="{{ include.id }}address" type="text" size="60"
+           placeholder="{{ include.address }}"
+           value="{{ include.address }}">
+    <button id="{{ include.id }}button" type="button"
+            onclick="{{ include.id }}_setup();">Set</button>
+  </div>
+  {% unless include.rate == "off" %}
+  <div>
+    <label for="{{ include.id }}rate">Rate</label>
+    <input id="{{ include.id }}rate" type="range" style="width: 270px;"
+           max="0.10000000" min="0.00000001" step="0.00000001" value="0.01000000"
+           oninput="document.getElementById('{{ include.id }}lrate').innerHTML = parseFloat(this.value).toFixed(8);">
+    <span id="{{ include.id }}lrate">0.01000000</span> BCH/hour
+  </div>
+  {% endunless  %}
+</div>
+
+<script>
+  function {{ include.id }}_setup() {
+    let fieldsEl = document.getElementById('{{ include.id }}');
+    fieldsEl.style.display = "none";
+
+    let addressEl = document.getElementById('{{ include.id }}address');
+    let address = addressEl.value;
+
+    {% unless include.rate == "off" %}
+    let rateEl = document.getElementById('{{ include.id }}rate')
+    let rate = parseFloat(rateEl.value);
+    {% else %}
+    let rate = undefined;
+    {% endunless %}
+
+    {{ include.fn }}(address, rate);
+  }
+</script>

@@ -1,100 +1,104 @@
 ---
 layout: default
+title: Start
 ---
 
-Video
------
+Choose an address and the rate, with the slider. You can use your own address to test. When ready, press the button and the frame will be applied to the video bellow. When a payment is made the video will start automatically.
 
-Choose an address, the viewing rate, and click "Go". You can use one of your own addresses.
+{% include fields.html id="fields" fn="setup" address="bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g" %}
 
-<div id="fields">
-  <div>
-    <label style="display: inline-block; width: 60px;" for="address">Address</label>
-    <input id="address" type="text" size="50"
-           placeholder="bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g"
-           value="bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g">
-    <button id="button" type="button"
-            onclick="setupVideo();">Go</button>
-  </div>
-  <div>
-    <label style="display: inline-block; width: 60px;" for="rate">Rate</label>
-    <input id="rate" type="range" style="width: 270px;"
-           max="0.10000000" min="0.00000001" step="0.00000001" value="0.01000000"
-           oninput="document.getElementById('lrate').innerHTML = parseFloat(this.value).toFixed(8);">
-    <span id="lrate">0.01000000</span> BCH/hour
-  </div>
-  <br/>
-</div>
 <div style="width: 640px; height: 360px; position: relative;">
-  <video id="htmlvideo"
-         controls
-         src="https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v"
-         width="640"
-         height="360">
-
-      Sorry, your browser doesn't support embedded videos.
-  </video>
+  <div id="video"></div>
   <div id="countdown"
        style="position: absolute; display: none; bottom: 40px; right: 10px; padding: 4px; background-color: white;"></div>
 </div>
 
 <script>
-  function setupVideo() {
-    let fieldsEl = document.getElementById('fields');
-    let addressEl = document.getElementById('address');
-    let rateEl = document.getElementById('rate');
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-    let video = document.getElementById('htmlvideo');
-    let countdown = document.getElementById('countdown');
-
-    fieldsEl.style.display = "none";
-
-    let address = addressEl.value;
-    let rate = parseFloat(rateEl.value);
-
-    let frame = new MoneyFrame({ id: 'htmlvideo', rate: rate, address: address });
-    frame.paidEvent.register(function() {
-      video.play();
+  var player;
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('video', {
+      height: '360',
+      width: '640',
+      videoId: 'OE3QTbgh-p8'
     });
+  }
+
+  function setup(address, rate) {
+    let frame = new MoneyFrame({
+      id: 'video',
+      rate: rate,
+      address: address
+    });
+
+    frame.paidEvent.register(function() {
+      player.playVideo();
+    });
+
     frame.unpaidEvent.register(function() {
-      video.pause();
+      player.pauseVideo();
       countdown.style.display = 'none';
     });
+
     frame.countdownEvent.register(function(status) {
       let seconds = Math.floor((status.paidUntil - Date.now()) / 1000);
-
       countdown.style.display = 'block';
       countdown.innerHTML = seconds + " seconds remaining";
     });
   }
 </script>
 
-Images
-------
+### Other Examples
 
-Try donating 20 cents to any of the addresses. If Bitcoin Cash is worth $500 then the image will show for about 1 minute.
+<style type="text/css">
+  .square {
+    padding: 4px;
+    float: left;
+    width: 160px;
+    height: 160px;
+    position: relative;
+  }
 
-| eatBCH_VE     | eatBCH_SS     | Coins4Clothes |
-|:-------------:|:-------------:|:-------------:|
-| 0.02 BCH/hour | 0.02 BCH/hour | 0.02 BCH/hour |
-| <img id="img_eatbch_ve" src="https://pbs.twimg.com/profile_images/1002336267411939328/SxeSLZvZ_400x400.jpg" width="150"> | <img id="img_eatbch_ss" src="https://pbs.twimg.com/profile_images/1002291143617396736/FOnwtK_O_400x400.jpg" width="150"> | <img id="img_c4clothes" src="https://pbs.twimg.com/profile_images/1021886596939833344/4qU5gwTy_400x400.jpg" width="150"> |
+  .square a {
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+  }
+
+  .square a span {
+    background-color: rgba(0, 0, 0, 0.8);
+    display: inline-block;
+    padding: 4px 0px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .square img {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+  }
+</style>
+
+<div class="square">
+  <a href="html5video.html">
+    <span>Images</span>
+    <img src="resources/images/images.png"></img>
+  </a>
+</div>
+
+<div class="square">
+  <a href="images.html">
+    <span>HTML5 video</span>
+    <img src="resources/images/html5video.png"></img>
+  </a>
+</div>
 
 <script src="resources/javascript/moneyframe.bundle.js"></script>
-
-<script>
-  new MoneyFrame({ width: 160, height: 230,
-    id: 'img_eatbch_ve',
-    rate: 0.02,
-    address: 'bitcoincash:pp8skudq3x5hzw8ew7vzsw8tn4k8wxsqsv0lt0mf3g'
-  });
-  new MoneyFrame({ width: 160, height: 230,
-    id: 'img_eatbch_ss',
-    rate: 0.02,
-    address: 'bitcoincash:qrsrvtc95gg8rrag7dge3jlnfs4j9pe0ugrmeml950'
-  });
-  new MoneyFrame({ width: 160, height: 230,
-    id: 'img_c4clothes',
-    rate: 0.02,
-    address: 'bitcoincash:qzx4tqcldmvs4up9mewkf3ru0z6vy9wm6qm782fwla'
-  });
-</script>
