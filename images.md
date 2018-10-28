@@ -31,7 +31,7 @@ Each image has a different rate. Try donating 10 cents. If Bitcoin Cash is worth
 
 <script>
   function setup(address) {
-    let opts = { width: 290, height: 300, addres: address };
+    let opts = { width: 290, height: 300, address: address };
     let a = Object.assign({}, opts, { id: 'imga', rate: 0.01 });
     let b = Object.assign({}, opts, { id: 'imgb', rate: 0.02 });
     let c = Object.assign({}, opts, { id: 'imgc', rate: 0.05 });
