@@ -55,6 +55,10 @@ Choose an address and the rate, with the slider. You can use your own address to
 ### Other Examples
 
 <style type="text/css">
+  .samples {
+    height: 180px;
+  }
+
   .square {
     padding: 4px;
     float: left;
@@ -72,6 +76,7 @@ Choose an address and the rate, with the slider. You can use your own address to
   }
 
   .square a span {
+    color: white;
     background-color: rgba(0, 0, 0, 0.8);
     display: inline-block;
     padding: 4px 0px;
@@ -82,23 +87,26 @@ Choose an address and the rate, with the slider. You can use your own address to
 
   .square img {
     position: absolute;
-    top: 4px;
-    left: 4px;
+    top: 3px;
+    left: 3px;
+    width: 160px;
   }
 </style>
 
-<div class="square">
-  <a href="html5video.html">
-    <span>Images</span>
-    <img src="resources/images/images.png"></img>
-  </a>
-</div>
+<div class="samples">
+  <div class="square">
+    <a href="images.html">
+      <span>Images</span>
+      <img src="resources/images/images.png"></img>
+    </a>
+  </div>
 
-<div class="square">
-  <a href="images.html">
-    <span>HTML5 video</span>
-    <img src="resources/images/html5video.png"></img>
-  </a>
+  <div class="square">
+    <a href="html5video.html">
+      <span>HTML5 video</span>
+      <img src="resources/images/html5video.png"></img>
+    </a>
+  </div>
 </div>
 
 <script src="resources/javascript/moneyframe.bundle.js"></script>
