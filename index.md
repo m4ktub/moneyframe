@@ -87,9 +87,12 @@ Choose an address and the rate, with the slider. You can use your own address to
 
   .square img {
     position: absolute;
-    top: 3px;
-    left: 3px;
+    top: 4px;
+    left: 4px;
     width: 160px;
+    padding: 0px;
+    margin: 0px;
+    border: none;
   }
 </style>
 
