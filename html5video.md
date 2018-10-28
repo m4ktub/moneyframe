@@ -10,7 +10,6 @@ Choose an address and the rate, with the slider. You can use your own address to
 
 <div style="width: 640px; height: 360px; position: relative;">
   <video id="htmlvideo"
-         controls
          loop
          src="https://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v"
          width="640"
