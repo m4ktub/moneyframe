@@ -13,28 +13,34 @@ Each image has a different rate. Try donating 10 cents. If Bitcoin Cash is worth
 <table>
 <tr>
   <td>
-    <img id="imga" src="resources/images/earth.jpg" width="300"></img>
+    <img id="imga" src="resources/images/earth.jpg" width="290">
   </td>
   <td>
-    <img id="imgb" src="resources/images/fire.jpg" width="300"></img>
+    <img id="imgb" src="resources/images/fire.jpg" width="290">
   </td>
 </tr>
 <tr>
   <td>
-    <img id="imgc" src="resources/images/water.jpg" width="300"></img>
+    <img id="imgc" src="resources/images/water.jpg" width="290">
   </td>
   <td>
-    <img id="imgd" src="resources/images/wind.jpg" width="300"></img>
+    <img id="imgd" src="resources/images/wind.jpg" width="290">
   </td>
 </tr>
 </table>
 
 <script>
   function setup(address) {
-    new MoneyFrame({ id: 'imga', rate: 0.01, address: address });
-    new MoneyFrame({ id: 'imgb', rate: 0.02, address: address });
-    new MoneyFrame({ id: 'imgc', rate: 0.05, address: address });
-    new MoneyFrame({ id: 'imgd', rate: 0.10, address: address });
+    let opts = { width: 290, height: 300, addres: address };
+    let a = Object.extends({}, opts, { id: 'imga', rate: 0.01 });
+    let b = Object.extends({}, opts, { id: 'imgb', rate: 0.02 });
+    let c = Object.extends({}, opts, { id: 'imgc', rate: 0.05 });
+    let d = Object.extends({}, opts, { id: 'imgd', rate: 0.10 });
+
+    new MoneyFrame(a);
+    new MoneyFrame(b);
+    new MoneyFrame(c);
+    new MoneyFrame(d);
   }
 </script>
 
