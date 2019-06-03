@@ -1,3 +1,6 @@
+
+> **WARNING**: This widget is hardcoded to the V1 of Bitcoin.com's REST API. That API has been discontinued.
+
 Money Frame
 ===========
 
